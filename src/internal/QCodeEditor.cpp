@@ -476,11 +476,7 @@ void QCodeEditor::proceedCompleterEnd(QKeyEvent *e)
 }
 
 void QCodeEditor::keyPressEvent(QKeyEvent* e) {
-#if QT_VERSION >= 0x050A00
   const int defaultIndent = tabStopDistance() / fontMetrics().averageCharWidth();
-#else
-  const int defaultIndent = tabStopWidth() / fontMetrics().averageCharWidth();
-#endif
 
   auto completerSkip = proceedCompleterBegin(e);
 
@@ -494,13 +490,8 @@ void QCodeEditor::keyPressEvent(QKeyEvent* e) {
     // Auto indentation
     int indentationLevel = getIndentationSpaces();
 
-#if QT_VERSION >= 0x050A00
     int tabCounts =
         indentationLevel * fontMetrics().averageCharWidth() / tabStopDistance();
-#else
-    int tabCounts =
-        indentationLevel * fontMetrics().averageCharWidth() / tabStopWidth();
-#endif
 
     // Have Qt Edior like behaviour, if {|} and enter is pressed indent the two
     // parenthesis
@@ -537,7 +528,7 @@ void QCodeEditor::keyPressEvent(QKeyEvent* e) {
 
     // Shortcut for moving line to left
     if (m_replaceTab && e->key() == Qt::Key_Backtab) {
-      indentationLevel = std::min(indentationLevel, m_tabReplace.size());
+      indentationLevel = std::min(indentationLevel, static_cast<int>(m_tabReplace.size()));
 
       auto cursor = textCursor();
 
@@ -651,7 +642,7 @@ void QCodeEditor::setCompleter(QCompleter *completer)
 
     connect(
         m_completer,
-        QOverload<const QString&>::of(&QCompleter::activated),
+        static_cast<void(QCompleter::*)(const QString&)>(&QCompleter::activated),
         this,
         &QCodeEditor::insertCompletion
     );
@@ -729,11 +720,7 @@ int QCodeEditor::getIndentationSpaces()
         }
         else
         {
-#if QT_VERSION >= 0x050A00
             indentationLevel += tabStopDistance() / fontMetrics().averageCharWidth();
-#else
-            indentationLevel += tabStopWidth() / fontMetrics().averageCharWidth();
-#endif
         }
     }
 

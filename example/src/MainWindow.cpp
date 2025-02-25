@@ -22,6 +22,7 @@
 #include <QSpinBox>
 #include <QGroupBox>
 #include <QLabel>
+#include <QFile>
 
 MainWindow::MainWindow(QWidget* parent) :
     QMainWindow(parent),
@@ -226,42 +227,42 @@ void MainWindow::performConnections()
 {
     connect(
         m_codeSampleCombobox,
-        QOverload<int>::of(&QComboBox::currentIndexChanged),
+        static_cast<void(QComboBox::*)(int)>(&QComboBox::currentIndexChanged),
         [this](int index)
         { m_codeEditor->setPlainText(m_codeSamples[index].second); }
     );
 
     connect(
         m_highlighterCombobox,
-        QOverload<int>::of(&QComboBox::currentIndexChanged),
+        static_cast<void(QComboBox::*)(int)>(&QComboBox::currentIndexChanged),
         [this](int index)
         { m_codeEditor->setHighlighter(m_highlighters[index].second); }
     );
 
     connect(
         m_completerCombobox,
-        QOverload<int>::of(&QComboBox::currentIndexChanged),
+        static_cast<void(QComboBox::*)(int)>(&QComboBox::currentIndexChanged),
         [this](int index)
         { m_codeEditor->setCompleter(m_completers[index].second); }
     );
 
     connect(
         m_styleCombobox,
-        QOverload<int>::of(&QComboBox::currentIndexChanged),
+        static_cast<void(QComboBox::*)(int)>(&QComboBox::currentIndexChanged),
         [this](int index)
         { m_codeEditor->setSyntaxStyle(m_styles[index].second); }
     );
 
     connect(
         m_readOnlyCheckBox,
-        &QCheckBox::stateChanged,
+        &QCheckBox::checkStateChanged,
         [this](int state)
         { m_codeEditor->setReadOnly(state != 0); }
     );
 
     connect(
         m_wordWrapCheckBox,
-        &QCheckBox::stateChanged,
+        &QCheckBox::checkStateChanged,
         [this](int state)
         {
             if (state != 0)
@@ -277,28 +278,28 @@ void MainWindow::performConnections()
 
     connect(
         m_parenthesesEnabledCheckbox,
-        &QCheckBox::stateChanged,
+        &QCheckBox::checkStateChanged,
         [this](int state)
         { m_codeEditor->setAutoParentheses(state != 0); }
     );
 
     connect(
         m_tabReplaceEnabledCheckbox,
-        &QCheckBox::stateChanged,
+        &QCheckBox::checkStateChanged,
         [this](int state)
         { m_codeEditor->setTabReplace(state != 0); }
     );
 
     connect(
         m_tabReplaceNumberSpinbox,
-        QOverload<int>::of(&QSpinBox::valueChanged),
+        static_cast<void(QSpinBox::*)(int)>(&QSpinBox::valueChanged),
         [this](int value)
         { m_codeEditor->setTabReplaceSize(value); }
     );
 
     connect(
         m_autoIndentationCheckbox,
-        &QCheckBox::stateChanged,
+        &QCheckBox::checkStateChanged,
         [this](int state)
         { m_codeEditor->setAutoIndentation(state != 0); }
     );
